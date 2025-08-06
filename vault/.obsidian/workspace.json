@@ -145,11 +145,26 @@
             }
           }
         ]
+      },
+      {
+        "id": "2a42cfdb34556b1c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "37c28a86128f6c74",
+            "type": "leaf",
+            "state": {
+              "type": "fantasy-statblocks-creature-pane",
+              "state": {},
+              "icon": "skull",
+              "title": "Combatant"
+            }
+          }
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
