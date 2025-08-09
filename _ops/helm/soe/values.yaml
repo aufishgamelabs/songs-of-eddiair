@@ -1,0 +1,179 @@
+## Docker
+Docker:
+  Secrets:
+    pull: gameday-docker
+
+## Image versions
+Version: latest
+
+## Environmental
+Env: dev
+
+EnableOpenAPI:
+  - dev
+  - alpha
+
+Hosts: []
+
+PullPolicy: IfNotPresent
+
+Replicas:
+  Auth: 1
+  Leagues: 1
+  Gameday: 1
+
+StaticIP: none
+
+## Databases
+Mongo:
+  Port: 27017
+  PoolSize: 25
+  IdleTime: 30s
+  Database: gameday
+  Collections:
+    LeagueInfo:
+      Name: leagueinfo
+      Interval: 15s
+      Timeout: 15s
+    NFL:
+      Games:
+        Name: nflgames
+        Interval: 15m
+        Timeout: 30s
+      Scores:
+        Name: nflscores
+        Interval: 15m
+        Timeout: 30s
+      Stadiums:
+        Name: nflstadiums
+        Interval: 15m
+        Timeout: 30s
+      Teams:
+        Name: nflteams
+        Interval: 15m
+        Timeout: 30s
+    Users:
+      Name: users
+      Timeout: 30s
+  Timeout: 15s
+  ReadPref: primarypreferred
+  Secrets:
+    values: gameday-mongo
+
+Redis:
+  Image: redislabs/rebloom
+  Version: 2.2.5
+  Addr: localhost:6379
+  Secrets:
+    values: gameday-redis
+    proxy: gameday-redis-proxy
+    proxypem: gameday-redis-proxy-pem
+
+## Proxies
+Stunnel:
+  Image: rleszilm/stunnel
+  Version: 5.59
+
+## Listeners
+RestAPI:
+  Transport: tcp
+  Addr: :8080
+  TlsEnabled: false
+
+GrpcAPI:
+  Transport: tcp
+  Addr: :8081
+  TlsEnabled: false
+
+RestService:
+  Transport: tcp
+  Addr: :8082
+  TlsEnabled: false
+  
+GrpcService:
+  Transport: tcp
+  Addr: :8083
+  TlsEnabled: false
+
+## Services
+Auth:
+  Codec: hs512
+  TwofactorDriver: twilio-sms
+  ValidFor: 720h
+  Secrets:
+    values: gameday-auth
+  Proxy:
+    Enabled: true
+    Addr: :8081
+    Insecure: true
+    Pattern: /v1/auth
+
+Gameday:
+  Driver: v1
+  Proxy:
+    Enabled: true
+    Addr: :8081
+    Insecure: true
+    Pattern: /v1/gameday
+
+Leagues:
+  Driver: v1
+  Proxy:
+    Enabled: true
+    Addr: :8081
+    Insecure: true
+    Pattern: /v1/leagues
+
+Tickets:
+  Driver: v1
+  Proxy:
+    Enabled: true
+    Addr: :8081
+    Insecure: true
+    Pattern: /v1/tickets
+
+User:
+  Proxy:
+    Enabled: true
+    Addr: :8081
+    Insecure: true
+    Pattern: /v1/user
+
+## Component Services
+Debug:
+  Enabled: true
+  Name: debug
+
+Health:
+  Enabled: true
+  Name: health
+  RequestPath: /health
+
+HS512:
+  Secrets:
+    values: gameday-hs512
+
+Logging:
+  Level: warning
+
+Metrics:
+  Driver: prometheus
+
+Prometheus:
+  RequestPath: /metrics
+  Namespace: gameday
+
+SportsData:
+  Timeout: 20s
+  Endpoint: https://fly.sportsdata.io
+  GamesInterval: 15m
+  ScoresInterval: 15m
+  StadiumsInterval: 15m
+  TeamsInterval: 15m
+  Secrets:
+    values: gameday-sportsdata
+
+Twilio:
+    Timeout: 1s
+    Secrets:
+      values: gameday-twilio

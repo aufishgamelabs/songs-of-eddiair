@@ -1,19 +1,6 @@
 SHELL := /bin/bash
 
-ROOT_DIR       ?= .
-
-CO_DIR         ?= $(ROOT_DIR)/_checkouts
-DIST_DIR       ?= $(ROOT_DIR)/dist
-SRC_DIR        ?= $(ROOT_DIR)/src
-VAULT_DIR      ?= $(ROOT_DIR)/vault
-
-QUARTZ_REPO    ?= https://github.com/jackyzha0/quartz.git
-QUARTZ_VERSION ?= v4.5.1
-QUARTZ_DIR     ?= $(SRC_DIR)/quartz
-QUARTZ_SRC_DIR ?= $(CO_DIR)/quartz
-QUARTZ_FILES   ?= globals.d.ts index.d.ts package.json quartz.config.ts quartz.layout.ts tsconfig.json
-QUARTZ_THREADS ?= 8
-
+. .common.mk
 
 build:
 	@echo "Building Quartz site..."
@@ -27,3 +14,25 @@ init:
 	$(foreach file, $(QUARTZ_FILES), [[ -f $(QUARTZ_DIR)/$(file) ]] || cp $(QUARTZ_SRC_DIR)/$(file) $(QUARTZ_DIR)/$(file);)
 	[[ -d $(QUARTZ_DIR)/node_modules ]] || (cd $(QUARTZ_DIR); npm install .)
 	[[ -d $(VAULT_DIR) ]] || mkdir -p $(VAULT_DIR)
+
+
+cloud-init:
+	[[ -eq "$(RELEASE_ENV)" "dev" ]] || (echo "Release environment must be set to 'dev' for cloud-init"; exit 1)
+
+	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo update
+	helm install ingress-nginx ingress-nginx/ingress-nginx
+	helm upgrade --reuse-values ingress-nginx ingress-nginx/ingress-nginx
+
+cloud-install:
+	helm install $(RELEASE) -f `pwd`/_ops/helm/gameday/$(RELEASE_ENV).yaml _ops/helm/gameday/ --set Version=$(BUILD_VERSION) --set Env=$(RELEASE_ENV)
+
+cloud-upgrade:
+ifeq "$(RELEASE_ENV)" "dev"
+	helm upgrade $(RELEASE) -f `pwd`/_ops/helm/gameday/$(RELEASE_ENV).yaml _ops/helm/gameday/ --set Version=$(BUILD_VERSION) --set Env=$(RELEASE_ENV) --set Logging.Level=trace
+else
+	helm upgrade $(RELEASE) -f `pwd`/_ops/helm/gameday/$(RELEASE_ENV).yaml _ops/helm/gameday/ --set Version=$(BUILD_VERSION) --set Env=$(RELEASE_ENV)
+endif
+
+cloud-uninstall:
+	helm uninstall $(RELEASE)
