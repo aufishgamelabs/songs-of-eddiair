@@ -4,7 +4,7 @@ static: build-quartz
 
 build-quartz: init-quartz
 	@echo "Building Quartz site..."
-	cd $(QUARTZ_DIR); npx quartz build --directory ../../$(VAULT_DIR) --output ../../$(BUILD_DIR) --concurrency $(QUARTZ_THREADS)
+	cd $(QUARTZ_DIR); npx quartz build --directory ../../$(QUARTZ_VAULT_DIR) --output ../../$(QUARTZ_BUILD_DIR) --concurrency $(QUARTZ_THREADS)
 
 init: init-quartz
 
@@ -15,7 +15,7 @@ init-quartz:
 	[[ -d $(QUARTZ_DIR)/quartz ]] || cp -r $(QUARTZ_SRC_DIR)/quartz $(QUARTZ_DIR)/quartz
 	$(foreach file, $(QUARTZ_FILES), [[ -f $(QUARTZ_DIR)/$(file) ]] || cp $(QUARTZ_SRC_DIR)/$(file) $(QUARTZ_DIR)/$(file);)
 	[[ -d $(QUARTZ_DIR)/node_modules ]] || (cd $(QUARTZ_DIR); npm install .)
-	[[ -d $(VAULT_DIR) ]] || mkdir -p $(VAULT_DIR)
+	[[ -d $(QUARTZ_VAULT_DIR) ]] || mkdir -p $(QUARTZ_VAULT_DIR)
 
 cloud-init:
 	[[ -eq "$(RELEASE_ENV)" "dev" ]] || (echo "Release environment must be set to 'dev' for cloud-init"; exit 1)
