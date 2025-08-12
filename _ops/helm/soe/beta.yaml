@@ -1,0 +1,4 @@
+Hosts:
+  - beta.fiveo.dev
+
+StaticIP: gameday-beta-gameday-api

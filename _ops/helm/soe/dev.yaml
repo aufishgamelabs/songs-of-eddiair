@@ -1,0 +1,18 @@
+## Image versions
+## Environmental
+PullPolicy: Never
+
+## Databases
+## Listeners
+## Services
+## Component Services
+Logging:
+  Level: trace
+
+SportsData:
+  GamesInterval: 24h
+  ScoresInterval: 24h
+  StadiumsInterval: 24h
+  TeamsInterval: 24h
+  Secrets:
+    values: gameday-sportsdata
