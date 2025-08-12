@@ -3,4 +3,5 @@
 _build/
 _checkouts/
 
+src/server/static/
 node_modules/
