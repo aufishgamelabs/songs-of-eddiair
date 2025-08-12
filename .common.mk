@@ -12,14 +12,15 @@ GIT_BRANCH		  := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "ma
 GIT_REVISION      := $(shell git rev-parse --short HEAD 2>/dev/null || echo "latest")
 
 # Quartz configuration
-QUARTZ_REPO      ?= https://github.com/jackyzha0/quartz.git
-QUARTZ_VERSION   ?= v4.5.1
-QUARTZ_DIR       ?= $(SRC_DIR)/quartz
-QUARTZ_SRC_DIR   ?= $(CO_DIR)/quartz
-QUARTZ_VAULT_DIR ?= $(SRC_DIR)/vault
-QUARTZ_BUILD_DIR ?= $(BUILD_DIR)/quartz
-QUARTZ_FILES     ?= globals.d.ts index.d.ts package.json quartz.config.ts quartz.layout.ts tsconfig.json
-QUARTZ_THREADS   ?= 8
+QUARTZ_REPO           ?= https://github.com/jackyzha0/quartz.git
+QUARTZ_VERSION        ?= v4.5.1
+QUARTZ_DIR            ?= $(SRC_DIR)/quartz
+QUARTZ_SRC_DIR        ?= $(CO_DIR)/quartz
+QUARTZ_VAULT_DIR      ?= $(SRC_DIR)/vault
+QUARTZ_BUILD_DIR      ?= $(BUILD_DIR)/quartz
+QUARTZ_RELEASE_BUCKET ?= soe-v1-static
+QUARTZ_FILES          ?= globals.d.ts index.d.ts package.json quartz.config.ts quartz.layout.ts tsconfig.json
+QUARTZ_THREADS        ?= 8
 
 # Release configuration
 # Get the current git tag, or default to v0.0.0 if none exists
