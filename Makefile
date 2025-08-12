@@ -10,7 +10,7 @@ release: release-quartz
 
 release-quartz: build-quartz
 	@echo "Releasing Quartz site..."
-	gcloud storage cp -r $(QUARTZ_BUILD_DIR)/* gs://$(QUARTZ_RELEASE_BUCKET)
+	$(GCLOUD) storage cp -r $(QUARTZ_BUILD_DIR)/* gs://$(QUARTZ_RELEASE_BUCKET)
 
 init: init-quartz
 
@@ -22,10 +22,10 @@ init-quartz:
 	$(foreach file, $(QUARTZ_FILES), [[ -f $(QUARTZ_DIR)/$(file) ]] || cp $(QUARTZ_SRC_DIR)/$(file) $(QUARTZ_DIR)/$(file);)
 	[[ -d $(QUARTZ_DIR)/node_modules ]] || (cd $(QUARTZ_DIR); npm install .)
 	[[ -d $(QUARTZ_VAULT_DIR) ]] || mkdir -p $(QUARTZ_VAULT_DIR)
-	gcloud storage buckets add-iam-policy-binding gs://$(QUARTZ_RELEASE_BUCKET) \                                         
-        --member=allUsers \
-        --role=roles/storage.objectViewer
-	gcloud storage buckets update gs://$(QUARTZ_RELEASE_BUCKET) --web-main-page-suffix=index.html --web-error-page=404.html
+	$(GCLOUD) storage buckets add-iam-policy-binding gs://$(QUARTZ_RELEASE_BUCKET) \
+		--member=allUsers \
+		--role=roles/storage.objectViewer
+	$(GCLOUD) storage buckets update gs://$(QUARTZ_RELEASE_BUCKET) --web-main-page-suffix=index.html --web-error-page=404.html
 
 cloud-init:
 	[[ -eq "$(RELEASE_ENV)" "dev" ]] || (echo "Release environment must be set to 'dev' for cloud-init"; exit 1)

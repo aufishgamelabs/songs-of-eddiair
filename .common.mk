@@ -68,6 +68,8 @@ DOCKER_TAG_PATCH := v$(TAG_MAJOR).$(TAG_MINOR).$(TAG_PATCH)
 DOCKER_TAG_BUILD := $(shell [[ $(GIT_BRANCH) != $(GIT_MASTER) ]] && echo -n "$(DOCKER_TAG_PATCH)-$(GIT_BRANCH).$(GIT_REVISION)")
 DOCKER_TAGS      := $(DOCKER_TAG_MAJOR) $(DOCKER_TAG_MINOR) $(DOCKER_TAG_PATCH) $(DOCKER_TAG_BUILD)
 
+GCLOUD ?= /usr/bin/gcloud
+
 ${info Current Git Tag:      $(CUR_GIT_TAG)}
 ${info Current Git Branch:   $(GIT_BRANCH)}
 ${info Current Git Revision: $(GIT_REVISION)}
